@@ -12,7 +12,7 @@ class MovieSearchDelegate extends SearchDelegate {
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: const Icon(Icons.clear),
         onPressed: () => query = '',
       )
     ];
@@ -21,24 +21,22 @@ class MovieSearchDelegate extends SearchDelegate {
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () => close(context, null),
     );
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    return Text("results");
+    return const Text("results");
   }
 
   Widget _emptyContainer() {
-    return Container(
-      child: Center(
-        child: Icon(
-          Icons.movie_creation_outlined,
-          color: Colors.black12,
-          size: 140,
-        ),
+    return const Center(
+      child: Icon(
+        Icons.movie_creation_outlined,
+        color: Colors.black12,
+        size: 140,
       ),
     );
   }
@@ -80,7 +78,7 @@ class _MovieItem extends StatelessWidget {
         leading: Hero(
           tag: movie.heroId!,
           child: FadeInImage(
-              placeholder: AssetImage('assets/no-image.jpg'),
+              placeholder: const AssetImage('assets/no-image.jpg'),
               image: NetworkImage(movie.fullPosterImg),
               width: 50,
               fit: BoxFit.contain),

@@ -13,11 +13,11 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text('Movies on cinemas')),
+          title: const Center(child: Text('Movies on cinemas')),
           elevation: 0,
           actions: [
             IconButton(
-              icon: Icon(Icons.search_outlined),
+              icon: const Icon(Icons.search_outlined),
               onPressed: () => showSearch(context: context, delegate: MovieSearchDelegate()),
             ),
           ],
@@ -33,6 +33,18 @@ class HomeScreen extends StatelessWidget {
               movies: moviesProvider.popularMovies,
               title: 'Populares',
               onNextPage: () => moviesProvider.getPopularMovies(),
+            ),
+
+             MovieSlider(
+              movies: moviesProvider.topRatedMovies,
+              title: 'Top Rated',
+              onNextPage: () => moviesProvider.getTopRatedMovies(),
+            ),
+
+             MovieSlider(
+              movies: moviesProvider.upcomingMovies,
+              title: 'Upcoming',
+              onNextPage: () => moviesProvider.getUpcomingMovies(),
             ),
           ],
         )));

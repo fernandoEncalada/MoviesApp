@@ -1,36 +1,40 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:movies_app/helpers/debouncer.dart';
 import 'package:movies_app/models/models.dart';
 import 'package:movies_app/models/search_response.dart';
 
 class MoviesProvider extends ChangeNotifier {
-  String _baseUrl = 'api.themoviedb.org';
-  String _apiKey = '390da4641d40f5df756d6ded5551908b';
-  String _language = 'es-ES';
+  final String _baseUrl = 'api.themoviedb.org';
+  final String _apiKey = '390da4641d40f5df756d6ded5551908b';
+  final String _language = 'es-ES';
 
   List<Movie> onDisplayMovies = [];
   List<Movie> popularMovies = [];
+  List<Movie> topRatedMovies = [];
+  List<Movie> upcomingMovies = [];
 
   Map<int, List<Cast>> moviesCast = {};
 
   int _popularPage = 0;
 
   final debouncer = Debouncer(
-    duration: Duration(milliseconds: 500),
+    duration: const Duration(milliseconds: 500),
   );
 
   final StreamController<List<Movie>> _suggestionStreamController =
-      new StreamController.broadcast();
+      StreamController.broadcast();
   Stream<List<Movie>> get suggestionStream =>
       _suggestionStreamController.stream;
 
   MoviesProvider() {
     getOnDisplayMovies();
     getPopularMovies();
+    getTopRatedMovies();
+    getUpcomingMovies();
   }
 
   Future<String> _getJsonData(String endpoint, [int page = 1]) async {
@@ -42,7 +46,7 @@ class MoviesProvider extends ChangeNotifier {
   }
 
   getOnDisplayMovies() async {
-    final jsonData = await this._getJsonData('3/movie/now_playing');
+    final jsonData = await _getJsonData('3/movie/now_playing');
 
     final nowPlayingResponse = NowPlayingResponse.fromJson(jsonData);
 
@@ -54,7 +58,7 @@ class MoviesProvider extends ChangeNotifier {
   getPopularMovies() async {
     _popularPage++;
 
-    final jsonData = await this._getJsonData('3/movie/popular', _popularPage);
+    final jsonData = await _getJsonData('3/movie/popular', _popularPage);
 
     final popularResponse = PopularResponse.fromJson(jsonData);
 
@@ -65,7 +69,7 @@ class MoviesProvider extends ChangeNotifier {
   Future<List<Cast>> getMovieCast(int movieId) async {
     if (moviesCast.containsKey(movieId)) return moviesCast[movieId]!;
 
-    final jsonData = await this._getJsonData('3/movie/$movieId/credits');
+    final jsonData = await _getJsonData('3/movie/$movieId/credits');
     final creditsResponse = CreditsResponse.fromJson(jsonData);
 
     moviesCast[movieId] = creditsResponse.cast;
@@ -90,10 +94,34 @@ class MoviesProvider extends ChangeNotifier {
       _suggestionStreamController.add(results);
     };
 
-    final timer = Timer.periodic(Duration(milliseconds: 300), (_) {
+    final timer = Timer.periodic(const Duration(milliseconds: 300), (_) {
       debouncer.value = searchTerm;
     });
 
-    Future.delayed(Duration(milliseconds: 301)).then((_) => timer.cancel());
+    Future.delayed(const Duration(milliseconds: 301))
+        .then((_) => timer.cancel());
+  }
+
+  getTopRatedMovies() async {
+    _popularPage++;
+
+    final jsonData = await _getJsonData('3/movie/top_rated', _popularPage);
+
+    final popularResponse = PopularResponse.fromJson(jsonData);
+
+    topRatedMovies = [...topRatedMovies, ...popularResponse.results];
+    notifyListeners();
+  }
+
+  getUpcomingMovies() async {
+    _popularPage++;
+
+    final jsonData = await _getJsonData('3/movie/upcoming', _popularPage);
+
+    final popularResponse = PopularResponse.fromJson(jsonData);
+
+    upcomingMovies = [...upcomingMovies, ...popularResponse.results];
+    print(upcomingMovies);
+    notifyListeners();
   }
 }

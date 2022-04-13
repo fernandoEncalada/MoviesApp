@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:movies_app/models/models.dart';
 import 'package:movies_app/providers/movies_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,16 +17,16 @@ class CastingCards extends StatelessWidget {
         builder: (_, AsyncSnapshot<List<Cast>> snapshot) {
           if (!snapshot.hasData) {
             return Container(
-              constraints: BoxConstraints(maxWidth: 150),
+              constraints: const BoxConstraints(maxWidth: 150),
               height: 180,
-              child: CupertinoActivityIndicator(),
+              child: const CupertinoActivityIndicator(),
             );
           }
 
           final List<Cast> cast = snapshot.data!;
 
           return Container(
-              margin: EdgeInsets.only(bottom: 30),
+              margin: const EdgeInsets.only(bottom: 30),
               width: double.infinity,
               height: 180,
               child: ListView.builder(
@@ -48,7 +47,7 @@ class _CastCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       width: 110,
       height: 100,
       child: Column(
@@ -56,14 +55,14 @@ class _CastCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: FadeInImage(
-              placeholder: AssetImage('assets/no-image.jpg'),
+              placeholder: const AssetImage('assets/no-image.jpg'),
               image: NetworkImage(actor.fullProfilePath),
               height: 140,
               width: 100,
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             actor.name,
             maxLines: 2,
